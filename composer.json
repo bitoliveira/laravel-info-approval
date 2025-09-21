@@ -1,0 +1,54 @@
+{
+  "name": "bitoliveira/laravel-approval",
+  "version": "0.1.0.0",
+  "description": "A Laravel package to add approval workflows to Eloquent models.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bruno Oliveira",
+      "email": "bit.oliveira.dev@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "illuminate/auth": "^11|^12",
+    "illuminate/database": "^11|^12",
+    "illuminate/broadcasting": "^11|^12",
+    "illuminate/routing": "^11|^12"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^8.0|^9.0",
+    "pestphp/pest": "^2.34",
+    "pestphp/pest-plugin-laravel": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "bitoliveira\\Approval\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "bitoliveira\\Approval\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "bitoliveira\\Approval\\ApprovalServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "pest",
+    "pest": "pest"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
