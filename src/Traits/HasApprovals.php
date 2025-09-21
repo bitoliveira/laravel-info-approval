@@ -12,16 +12,6 @@ trait HasApprovals
         return $this->morphMany(Approval::class, 'approvable');
     }
 
-    /**
-     * Cria um pedido de aprovação, com suporte a múltiplos níveis.
-     *
-     * Exemplo de $levels:
-     * [
-     *   ['roles' => ['Manager', 'Finance']],
-     *   ['roles' => ['Admin']],
-     * ]
-     * Se omitir ou passar roles vazias num nível, qualquer utilizador poderá aprovar esse nível.
-     */
     public function requestApproval(string $action, array $data, int $userId, ?array $levels = null): Approval
     {
         return $this->approvals()->create([
