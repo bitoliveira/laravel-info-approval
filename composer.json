@@ -1,5 +1,5 @@
 {
-  "name": "bitoliveira/laravel-approval",
+  "name": "bitoliveira/laravel-info-approval",
   "version": "0.1.0.0",
   "description": "A Laravel package to add approval workflows to Eloquent models.",
   "type": "library",

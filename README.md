@@ -10,7 +10,7 @@ Estado: rascunho inicial (MVP). Esta é apenas a base do package, pronta para se
 2. Instale via Composer:
 
 ```bash
-composer require bitoliveira/laravel-approval
+composer require bitoliveira/laravel-info-approval
 ```
 
 O pacote usa auto-discovery.

@@ -43,7 +43,7 @@ Se necessitar de comunicação cifrada, indique-o no primeiro e‑mail para comb
 
 ## Âmbito
 
-Esta política cobre o código deste repositório (bitoliveira/laravel-approval). Questões de segurança em dependências de terceiros devem ser reportadas às equipas responsáveis.
+Esta política cobre o código deste repositório (bitoliveira/laravel-info-approval). Questões de segurança em dependências de terceiros devem ser reportadas às equipas responsáveis.
 
 ---
 
@@ -92,4 +92,4 @@ If you require encrypted communication, mention it in your initial email and we 
 
 ## Scope
 
-This policy covers the code in this repository (bitoliveira/laravel-approval). Security issues in third‑party dependencies should be reported to their respective maintainers.
+This policy covers the code in this repository (bitoliveira/laravel-info-approval). Security issues in third‑party dependencies should be reported to their respective maintainers.
