@@ -16,8 +16,7 @@
     "illuminate/auth": "^11|^12",
     "illuminate/database": "^11|^12",
     "illuminate/broadcasting": "^11|^12",
-    "illuminate/routing": "^11|^12",
-    "bitoliveira/laravel-info-approval": "dev-main"
+    "illuminate/routing": "^11|^12"
   },
   "require-dev": {
     "orchestra/testbench": "^8.0|^9.0",
@@ -50,6 +49,12 @@
       "pestphp/pest-plugin": true
     }
   },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/bitoliveira/laravel-info-approval"
+    }
+  ]
 }
