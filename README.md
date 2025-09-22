@@ -1,4 +1,4 @@
-# Laravel Approval
+# Laravel Info Approval
 
 Pacote inicial para adicionar fluxos de aprovação a modelos Eloquent no Laravel.
 
