@@ -93,6 +93,8 @@ public function test_salary_update_requires_approval()
 
 O pacote expõe endpoints de API para gestão de aprovações, prontos para consumo por apps móveis.
 
+**Documentação completa**: Consulte [API.md](./API.md) para documentação detalhada com exemplos de requests/responses.
+
 Rotas (prefixo configurável, por predefinição: `approvals`):
 - GET /approvals — lista as aprovações (pode filtrar por `status`, `approvable_type`, `approvable_id`).
 - GET /approvals/{id} — mostra uma aprovação.
@@ -102,11 +104,70 @@ Rotas (prefixo configurável, por predefinição: `approvals`):
 Configuração:
 - Em `config/approval.php` pode ajustar:
   - `api.prefix`: prefixo das rotas (default: `approvals`).
-  - `api.middleware`: middleware aplicado às rotas (default: `["api"]`). Adicione o guard de autenticação desejado, por ex.: `["api", "auth:sanctum"]`.
+  - `api.middleware`: middleware aplicado às rotas (default: `["api", "auth:sanctum"]`). **Autenticação é obrigatória por segurança.**
 
-Notas:
-- A validação de permissões por nível é respeitada automaticamente (via roles) quando definida em `levels`. Se um nível não exigir roles, qualquer utilizador poderá aprovar/rejeitar esse nível.
-- Nos endpoints `approve` e `reject` é obrigatório enviar `approver_id` (ID do utilizador que está a executar a ação).
+**Segurança**:
+- Autenticação via `auth:sanctum` é obrigatória por padrão.
+- O `approver_id` DEVE corresponder ao ID do utilizador autenticado (validação automática).
+- Validação de permissões por nível é respeitada automaticamente (via roles).
+- Proteção contra aprovações duplicadas pelo mesmo utilizador.
+
+## Estratégias de Aprovação
+
+O pacote suporta três estratégias de aprovação:
+
+### 1. Single (padrão)
+Uma única aprovação é suficiente.
+
+```php
+$approval = $employee->requestApproval('update_field', [
+    'field' => 'salary',
+    'new_value' => 2500,
+    'strategy' => 'single',
+], userId: 1);
+```
+
+### 2. Majority
+Requer aprovação da maioria dos aprovadores listados (mais de 50%).
+
+```php
+$approval = $employee->requestApproval('update_field', [
+    'field' => 'salary',
+    'new_value' => 2500,
+    'strategy' => 'majority',
+    'approvers' => [1, 2, 3], // Precisa de 2 aprovações (maioria de 3)
+], userId: 10);
+```
+
+### 3. Unanimous
+Requer aprovação de TODOS os aprovadores listados.
+
+```php
+$approval = $employee->requestApproval('update_field', [
+    'field' => 'salary',
+    'new_value' => 2500,
+    'strategy' => 'unanimous',
+    'approvers' => [1, 2], // Ambos precisam aprovar
+], userId: 10);
+```
+
+## Eventos
+
+O pacote dispara eventos que podem ser usados para notificações:
+
+- `ApprovalRequested`: Quando uma aprovação é criada
+- `ApprovalApproved`: Quando uma aprovação é finalmente aprovada
+- `ApprovalRejected`: Quando uma aprovação é rejeitada
+- `ApprovalLevelAdvanced`: Quando avança para o próximo nível
+
+```php
+use bitoliveira\Approval\Events\ApprovalRequested;
+
+Event::listen(ApprovalRequested::class, function ($event) {
+    // Enviar notificação aos aprovadores
+    $approval = $event->approval;
+});
+```
 
 ## Próximos passos
 

@@ -32,8 +32,9 @@ return [
     'api' => [
         // Route prefix under the application's API group
         'prefix' => 'approvals',
-        // Middleware to apply to the package routes. You can add your auth guard here (e.g., 'auth:sanctum')
-        'middleware' => ['api'],
+        // Middleware to apply to the package routes. IMPORTANT: Authentication is REQUIRED.
+        // Default uses 'auth:sanctum' - change to your auth guard if needed
+        'middleware' => ['api', 'auth:sanctum'],
     ],
 
     // Table names if/when migrations are added (placeholders for now)

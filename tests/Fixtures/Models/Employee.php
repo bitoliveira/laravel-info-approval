@@ -10,4 +10,8 @@ class Employee extends Model
     use HasApprovals;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'salary' => 'float',
+    ];
 }

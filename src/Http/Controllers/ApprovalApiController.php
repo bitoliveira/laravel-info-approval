@@ -42,6 +42,13 @@ class ApprovalApiController extends Controller
             'approver_id' => ['required', 'integer'],
         ]);
 
+        // Validar que o approver_id é do utilizador autenticado
+        if ($request->user() && (int) $data['approver_id'] !== (int) $request->user()->id) {
+            return response()->json([
+                'message' => 'O approver_id deve corresponder ao utilizador autenticado.',
+            ], 403);
+        }
+
         try {
             $service->approve($approval, (int) $data['approver_id']);
         } catch (\Throwable $e) {
@@ -61,6 +68,13 @@ class ApprovalApiController extends Controller
         $data = $request->validate([
             'approver_id' => ['required', 'integer'],
         ]);
+
+        // Validar que o approver_id é do utilizador autenticado
+        if ($request->user() && (int) $data['approver_id'] !== (int) $request->user()->id) {
+            return response()->json([
+                'message' => 'O approver_id deve corresponder ao utilizador autenticado.',
+            ], 403);
+        }
 
         try {
             $service->reject($approval, (int) $data['approver_id']);

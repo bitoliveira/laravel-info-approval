@@ -38,5 +38,8 @@ class TestCase extends Orchestra
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        // Disable sanctum authentication for tests (use plain 'api' middleware)
+        $app['config']->set('approval.api.middleware', ['api']);
     }
 }
