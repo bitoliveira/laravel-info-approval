@@ -104,5 +104,5 @@ it('prevents duplicate approvals from same approver', function () {
 
     // Same approver tries again - should throw exception
     expect(fn() => app(ApprovalService::class)->approve($approval, approverId: 1))
-        ->toThrow(\RuntimeException::class, 'Utilizador já aprovou este pedido.');
+        ->toThrow(\bitoliveira\Approval\Exceptions\DuplicateApprovalException::class, 'Utilizador já aprovou este pedido.');
 });

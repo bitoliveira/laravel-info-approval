@@ -2,19 +2,23 @@
 
 namespace bitoliveira\Approval\Services;
 
+use bitoliveira\Approval\Contracts\ApprovalServiceInterface;
 use bitoliveira\Approval\Events\ApprovalApproved;
 use bitoliveira\Approval\Events\ApprovalLevelAdvanced;
 use bitoliveira\Approval\Events\ApprovalRejected;
+use bitoliveira\Approval\Exceptions\DuplicateApprovalException;
+use bitoliveira\Approval\Exceptions\InvalidApprovalStatusException;
+use bitoliveira\Approval\Exceptions\UnauthorizedApproverException;
 use bitoliveira\Approval\Models\Approval;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
-class  ApprovalService
+class  ApprovalService implements ApprovalServiceInterface
 {
     public function approve(Approval $approval, int $approverId): void
     {
         if ($approval->status !== 'pending') {
-            return; // nada a fazer
+            throw new InvalidApprovalStatusException('Esta aprovação não pode ser modificada pois já foi ' . $approval->status . '.');
         }
 
         // Verificar se o utilizador pode aprovar o nível atual
@@ -74,7 +78,7 @@ class  ApprovalService
     public function reject(Approval $approval, int $approverId): void
     {
         if ($approval->status !== 'pending') {
-            return;
+            throw new InvalidApprovalStatusException('Esta aprovação não pode ser modificada pois já foi ' . $approval->status . '.');
         }
 
         $this->assertUserCanActOnCurrentLevel($approval, $approverId);
@@ -145,7 +149,7 @@ class  ApprovalService
         $allowed = !empty(array_intersect($requiredRoles, $userRoles));
 
         if (!$allowed) {
-            throw new \RuntimeException('Utilizador não autorizado a aprovar este nível.');
+            throw new UnauthorizedApproverException();
         }
     }
 
@@ -187,7 +191,7 @@ class  ApprovalService
         $log = $approval->approvals_log ?? [];
         foreach ($log as $entry) {
             if ($entry['action'] === 'approve' && $entry['by'] === $approverId) {
-                throw new \RuntimeException('Utilizador já aprovou este pedido.');
+                throw new DuplicateApprovalException();
             }
         }
     }

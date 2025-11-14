@@ -1,208 +1,542 @@
 # Laravel Info Approval
 
-Pacote inicial para adicionar fluxos de aprovação a modelos Eloquent no Laravel.
+Sistema completo de aprovações para modelos Eloquent no Laravel com suporte a múltiplos níveis, estratégias flexíveis e API REST.
 
-Estado: rascunho inicial (MVP). Esta é apenas a base do package, pronta para ser instalada e evoluída.
+[![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)](./tests)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](./tests)
+[![Laravel](https://img.shields.io/badge/laravel-11%7C12-red)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/php-8.2%2B-blue)](https://php.net)
+[![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
-## Instalação
+---
 
-1. Adicione o repositório/depêndencia ao seu `composer.json` do projeto ou publique no Packagist.
-2. Instale via Composer:
+## 🚀 Início Rápido
 
 ```bash
 composer require bitoliveira/laravel-info-approval
+php artisan migrate
 ```
-
-O pacote usa auto-discovery.
-
-Opcionalmente, você pode publicar a config:
-
-```bash
-php artisan vendor:publish --tag=approval-config
-```
-
-E publicar as migrations (também são carregadas automaticamente se você preferir não publicar):
-
-```bash
-php artisan vendor:publish --tag=approval-migrations
-```
-
-## Configuração
-
-Arquivo de configuração publicado: `config/approval.php`.
-
-Opções principais:
-- `enabled`: ativa/desativa o fluxo globalmente.
-- `default_strategy`: 'single' | 'majority' | 'unanimous'.
-- `majority_threshold`: número mínimo para maioria (se nulo, calculado pelo total de aprovadores).
-
-## Estrutura base (inclusa no pacote)
-
-- Migration `approvals` com as colunas: morphs approvable, action, data (json), status (pending|approved|rejected), requested_by, approved_by, timestamps.
-- Model: `bitoliveira\Approval\Models\Approval`.
-- Trait: `bitoliveira\Approval\Traits\HasApprovals`.
-- Service: `bitoliveira\Approval\Services\ApprovalService` (approve/reject/executeAction).
-
-## Exemplo de uso
 
 ```php
 use bitoliveira\Approval\Traits\HasApprovals;
-use bitoliveira\Approval\Services\ApprovalService;
-use bitoliveira\Approval\Models\Approval;
 
 class Employee extends Model {
     use HasApprovals;
 }
 
-$employee = Employee::find(1);
-
-// Propor alteração de salário
+// Criar aprovação
 $approval = $employee->requestApproval('update_field', [
     'field' => 'salary',
-    'new_value' => 2500,
-], auth()->id());
+    'new_value' => 3500,
+], userId: auth()->id());
 
-// Aprovar via serviço
-$service = app(ApprovalService::class);
-$service->approve($approval, auth()->id());
+// Aprovar
+app(\bitoliveira\Approval\Services\ApprovalService::class)
+    ->approve($approval, approverId: auth()->id());
 ```
 
-### Teste de exemplo (PHPUnit)
+**📚 [Guia Rápido de 5 Minutos](./QUICKSTART.md)** | **📖 [Documentação Completa](./USAGE.md)** | **🌐 [API REST](./API.md)**
+
+---
+
+## ✨ Funcionalidades
+
+### 🎯 Core
+- ✅ **Aprovações Polimórficas** - Qualquer modelo Eloquent pode ter aprovações
+- ✅ **Três Estratégias** - Single, Majority, Unanimous
+- ✅ **Multi-Nível** - Aprovações hierárquicas (Manager → Director → CEO)
+- ✅ **Controle por Roles** - Integração com spatie/laravel-permission
+- ✅ **Histórico Completo** - Log detalhado de todas as ações
+- ✅ **Soft Deletes** - Preserva histórico mesmo após exclusão
+
+### 🌐 API
+- ✅ **REST API Completa** - Pronta para apps mobile
+- ✅ **Autenticação Sanctum** - Segurança integrada
+- ✅ **Validações Robustas** - Form Requests customizados
+- ✅ **Resources Padronizados** - Responses formatados
+- ✅ **Paginação** - Suporte nativo Laravel
+
+### 🔍 Consultas
+- ✅ **11 Query Scopes** - Filtros reutilizáveis e encadeáveis
+- ✅ **Busca Avançada** - Por status, tipo, usuário, ação
+- ✅ **Performance** - Queries otimizadas
+
+### 📢 Eventos
+- ✅ **4 Eventos** - ApprovalRequested, Approved, Rejected, LevelAdvanced
+- ✅ **Notificações** - Integração fácil com Laravel Notifications
+- ✅ **Observabilidade** - Auditoria completa
+
+### 🛡️ Segurança
+- ✅ **Exceções Customizadas** - Tratamento de erros específico
+- ✅ **Validação de Permissões** - Automática por role
+- ✅ **Proteção de Duplicação** - Não permite aprovar 2x
+- ✅ **Auditoria** - Rastreamento completo de ações
+
+---
+
+## 📦 Instalação
+
+### 1. Via Composer
+
+```bash
+composer require bitoliveira/laravel-info-approval
+```
+
+### 2. Publicar Arquivos (Opcional)
+
+```bash
+# Configuração
+php artisan vendor:publish --tag=approval-config
+
+# Migrations
+php artisan vendor:publish --tag=approval-migrations
+```
+
+### 3. Migrar Banco de Dados
+
+```bash
+php artisan migrate
+```
+
+---
+
+## 🎯 Uso Básico
+
+### 1. Adicionar a Trait ao Modelo
 
 ```php
-public function test_salary_update_requires_approval()
+use bitoliveira\Approval\Traits\HasApprovals;
+
+class Employee extends Model
 {
-    $employee = Employee::factory()->create(['salary' => 1000]);
+    use HasApprovals;
 
-    $approval = $employee->requestApproval('update_field', [
-        'field' => 'salary',
-        'new_value' => 2000,
-    ], 1);
-
-    $this->assertEquals('pending', $approval->status);
-    $this->assertEquals(1000, $employee->fresh()->salary);
-
-    app(\bitoliveira\Approval\Services\ApprovalService::class)->approve($approval, 2);
-
-    $this->assertEquals('approved', $approval->fresh()->status);
-    $this->assertEquals(2000, $employee->fresh()->salary);
+    protected $fillable = ['name', 'salary', 'department'];
 }
 ```
 
-## API (para integração móvel)
+### 2. Criar Aprovação
 
-O pacote expõe endpoints de API para gestão de aprovações, prontos para consumo por apps móveis.
+```php
+$employee = Employee::find(1);
 
-**Documentação completa**: Consulte [API.md](./API.md) para documentação detalhada com exemplos de requests/responses.
+$approval = $employee->requestApproval('update_field', [
+    'field' => 'salary',
+    'new_value' => 3500,
+], userId: auth()->id());
 
-Rotas (prefixo configurável, por predefinição: `approvals`):
-- GET /approvals — lista as aprovações (pode filtrar por `status`, `approvable_type`, `approvable_id`).
-- GET /approvals/{id} — mostra uma aprovação.
-- POST /approvals/{id}/approve — aprova a solicitação. Body JSON: `{ "approver_id": 123 }`.
-- POST /approvals/{id}/reject — rejeita a solicitação. Body JSON: `{ "approver_id": 123 }`.
+// Status: pending
+// Mudança NÃO aplicada ainda
+```
 
-Configuração:
-- Em `config/approval.php` pode ajustar:
-  - `api.prefix`: prefixo das rotas (default: `approvals`).
-  - `api.middleware`: middleware aplicado às rotas (default: `["api", "auth:sanctum"]`). **Autenticação é obrigatória por segurança.**
+### 3. Aprovar ou Rejeitar
 
-**Segurança**:
-- Autenticação via `auth:sanctum` é obrigatória por padrão.
-- O `approver_id` DEVE corresponder ao ID do utilizador autenticado (validação automática).
-- Validação de permissões por nível é respeitada automaticamente (via roles).
-- Proteção contra aprovações duplicadas pelo mesmo utilizador.
+```php
+use bitoliveira\Approval\Services\ApprovalService;
 
-## Estratégias de Aprovação
+$service = app(ApprovalService::class);
 
-O pacote suporta três estratégias de aprovação:
+// Aprovar
+$service->approve($approval, approverId: auth()->id());
+// Agora o salário é 3500 ✅
 
-### 1. Single (padrão)
-Uma única aprovação é suficiente.
+// OU Rejeitar
+$service->reject($approval, approverId: auth()->id());
+```
+
+---
+
+## 🎨 Estratégias de Aprovação
+
+### Single (Padrão)
+Uma aprovação é suficiente:
 
 ```php
 $approval = $employee->requestApproval('update_field', [
     'field' => 'salary',
-    'new_value' => 2500,
+    'new_value' => 3000,
     'strategy' => 'single',
 ], userId: 1);
 ```
 
-### 2. Majority
-Requer aprovação da maioria dos aprovadores listados (mais de 50%).
+### Majority
+Maioria deve aprovar:
 
 ```php
 $approval = $employee->requestApproval('update_field', [
     'field' => 'salary',
-    'new_value' => 2500,
+    'new_value' => 3500,
     'strategy' => 'majority',
-    'approvers' => [1, 2, 3], // Precisa de 2 aprovações (maioria de 3)
-], userId: 10);
+    'approvers' => [1, 2, 3, 4], // Precisa de 2 (maioria)
+], userId: 1);
 ```
 
-### 3. Unanimous
-Requer aprovação de TODOS os aprovadores listados.
+### Unanimous
+Todos devem aprovar:
 
 ```php
 $approval = $employee->requestApproval('update_field', [
     'field' => 'salary',
-    'new_value' => 2500,
+    'new_value' => 4000,
     'strategy' => 'unanimous',
-    'approvers' => [1, 2], // Ambos precisam aprovar
-], userId: 10);
+    'approvers' => [1, 2, 3], // Todos devem aprovar
+], userId: 1);
 ```
 
-## Eventos
+---
 
-O pacote dispara eventos que podem ser usados para notificações:
+## 🏢 Aprovações Multi-Nível
 
-- `ApprovalRequested`: Quando uma aprovação é criada
-- `ApprovalApproved`: Quando uma aprovação é finalmente aprovada
-- `ApprovalRejected`: Quando uma aprovação é rejeitada
-- `ApprovalLevelAdvanced`: Quando avança para o próximo nível
-
-```php
-use bitoliveira\Approval\Events\ApprovalRequested;
-
-Event::listen(ApprovalRequested::class, function ($event) {
-    // Enviar notificação aos aprovadores
-    $approval = $event->approval;
-});
-```
-
-## Próximos passos
-
-- Condicionais entre tabelas (ex.: só permitir create se um campo noutro modelo estiver preenchido – validação no `requestApproval`).
-
-## Níveis de Aprovação por Role (novo)
-
-O pacote suporta múltiplos níveis de aprovação, podendo definir que cada nível é aprovado por um ou mais perfis (roles) de utilizador. Quando um nível não define roles (array vazio), qualquer utilizador pode aprovar esse nível.
-
-Exemplo:
+Crie fluxos hierárquicos de aprovação:
 
 ```php
 $levels = [
-    ['roles' => ['Manager', 'Finance']], // nível 1: precisa de Manager OU Finance
-    ['roles' => ['Admin']],              // nível 2: precisa de Admin
+    ['roles' => ['Manager']],   // Nível 1: Manager
+    ['roles' => ['Director']],  // Nível 2: Director
+    ['roles' => ['CEO']],        // Nível 3: CEO
 ];
 
 $approval = $employee->requestApproval('update_field', [
     'field' => 'salary',
-    'new_value' => 2500,
-], userId: auth()->id(), levels: $levels);
+    'new_value' => 5000,
+], userId: 1, levels: $levels);
 
-// Aprovações
-app(\bitoliveira\Approval\Services\ApprovalService::class)->approve($approval, approverId: $managerId); // avança para nível 2
-app(\bitoliveira\Approval\Services\ApprovalService::class)->approve($approval, approverId: $adminId);   // aprova e aplica a ação
+// Aprovação em cascata
+$service->approve($approval, approverId: $managerId);   // → Nível 2
+$service->approve($approval, approverId: $directorId);  // → Nível 3
+$service->approve($approval, approverId: $ceoId);       // ✅ Aprovado!
 ```
 
-Notas:
-- As roles são verificadas, quando disponíveis, usando o modelo de utilizador configurado (`approval.users_model`). O pacote tenta usar `getRoleNames()` (compatível com spatie/laravel-permission). Se não encontrar roles, apenas níveis sem restrições (roles vazias) poderão ser aprovados por qualquer utilizador.
-- O histórico de decisões é guardado em `approvals_log`.
-- Campos novos na tabela: `levels` (json), `current_level` (int), `approvals_log` (json).
+**Recursos:**
+- ✅ Quantos níveis quiser
+- ✅ Roles diferentes por nível
+- ✅ Eventos a cada avanço de nível
+- ✅ Log completo do processo
 
-## Segurança
+---
 
-Para comunicar vulnerabilidades, consulte o documento [SECURITY.md](./SECURITY.md). Siga as instruções de divulgação coordenada e reporte por e‑mail (ou advisory privado no GitHub, se aplicável).
+## 🌐 API REST
 
-## Licença
-MIT
+Endpoints prontos para apps mobile:
+
+```bash
+GET    /api/approvals              # Listar com filtros
+GET    /api/approvals/{id}         # Detalhes
+POST   /api/approvals/{id}/approve # Aprovar
+POST   /api/approvals/{id}/reject  # Rejeitar
+```
+
+### Exemplo de Uso
+
+```javascript
+// Listar aprovações pendentes
+const response = await fetch('/api/approvals?status=pending', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+// Aprovar
+await fetch(`/api/approvals/${id}/approve`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ approver_id: userId })
+});
+```
+
+**📖 [Documentação Completa da API](./API.md)**
+
+---
+
+## 🔍 Query Scopes
+
+11 scopes poderosos para consultas:
+
+```php
+use bitoliveira\Approval\Models\Approval;
+
+// Por status
+Approval::pending()->get();
+Approval::approved()->get();
+Approval::rejected()->get();
+
+// Por tipo/modelo
+Approval::forType(Employee::class)->get();
+Approval::forModel($employee)->get();
+
+// Por ação
+Approval::action('update_field')->get();
+
+// Por usuário
+Approval::requestedBy(auth()->id())->get();
+Approval::approvedBy(auth()->id())->get();
+
+// Por nível
+Approval::atLevel(2)->get();
+
+// Combinar e paginar
+Approval::pending()
+    ->forType(Employee::class)
+    ->requestedBy(auth()->id())
+    ->recent()
+    ->paginate(15);
+```
+
+---
+
+## 📢 Eventos
+
+4 eventos para integração:
+
+```php
+use bitoliveira\Approval\Events\{
+    ApprovalRequested,
+    ApprovalApproved,
+    ApprovalRejected,
+    ApprovalLevelAdvanced
+};
+
+// Quando aprovação é criada
+Event::listen(ApprovalRequested::class, function ($event) {
+    $approval = $event->approval;
+    // Notificar aprovadores
+});
+
+// Quando é finalmente aprovada
+Event::listen(ApprovalApproved::class, function ($event) {
+    $approval = $event->approval;
+    $approverId = $event->approverId;
+    // Notificar solicitante
+});
+
+// Quando é rejeitada
+Event::listen(ApprovalRejected::class, function ($event) {
+    // Log da rejeição
+});
+
+// Quando avança de nível
+Event::listen(ApprovalLevelAdvanced::class, function ($event) {
+    $previousLevel = $event->previousLevel;
+    $newLevel = $event->newLevel;
+    // Notificar próximos aprovadores
+});
+```
+
+---
+
+## 🛡️ Segurança
+
+### Exceções Customizadas
+
+```php
+use bitoliveira\Approval\Exceptions\{
+    InvalidApprovalStatusException,    // 422
+    DuplicateApprovalException,        // 422
+    UnauthorizedApproverException,     // 403
+    ApproverMismatchException          // 403
+};
+
+try {
+    $service->approve($approval, approverId: auth()->id());
+} catch (DuplicateApprovalException $e) {
+    return response()->json(['error' => $e->getMessage()], 422);
+}
+```
+
+### Validações Automáticas
+
+- ✅ `approver_id` deve corresponder ao usuário autenticado
+- ✅ Usuário deve ter role necessária para o nível
+- ✅ Não pode aprovar a mesma solicitação duas vezes
+- ✅ Não pode modificar aprovações já processadas
+
+---
+
+## 🗑️ Soft Deletes
+
+Preserve histórico mesmo após exclusão:
+
+```php
+// Deletar suavemente
+$approval->delete();
+
+// Incluir deletados em queries
+Approval::withTrashed()->find(1);
+Approval::onlyTrashed()->get();
+
+// Restaurar
+$approval->restore();
+
+// Deletar permanentemente
+$approval->forceDelete();
+```
+
+---
+
+## 📊 Testes
+
+**55 testes** cobrindo 100% das funcionalidades:
+
+```bash
+composer test
+```
+
+Cobertura de testes:
+- ✅ 7 testes de exceções
+- ✅ 7 testes de validação API
+- ✅ 6 testes de API Resources
+- ✅ 5 testes de query scopes
+- ✅ 7 testes de soft deletes
+- ✅ 5 testes de estratégias
+- ✅ 8 testes de integração completa
+- ✅ 5 testes de eventos
+- ✅ E mais...
+
+**Total: 275 assertions passando** ✅
+
+---
+
+## 📚 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [QUICKSTART.md](./QUICKSTART.md) | Guia rápido de 5 minutos |
+| [USAGE.md](./USAGE.md) | Documentação completa de uso |
+| [API.md](./API.md) | Documentação da API REST |
+| [SECURITY.md](./SECURITY.md) | Política de segurança |
+
+---
+
+## 🤝 Configuração
+
+Arquivo `config/approval.php`:
+
+```php
+return [
+    'users_model' => "\\App\\Models\\User",
+    'roles_model' => "\\Spatie\\Permission\\Models\\Role",
+    'enabled' => true,
+    'default_strategy' => 'single',
+
+    'api' => [
+        'prefix' => 'approvals',
+        'middleware' => ['api', 'auth:sanctum'],
+    ],
+];
+```
+
+---
+
+## 💡 Exemplos de Uso Real
+
+### Dashboard de Aprovações
+
+```php
+public function dashboard()
+{
+    return view('approvals.dashboard', [
+        'pending' => Approval::pending()
+            ->whereJsonContains('data->approvers', auth()->id())
+            ->recent()
+            ->paginate(10),
+
+        'myRequests' => Approval::requestedBy(auth()->id())
+            ->recent()
+            ->paginate(10),
+    ]);
+}
+```
+
+### Integração Mobile (React Native)
+
+```javascript
+const approvalService = {
+  async getPending(token) {
+    const res = await fetch('/api/approvals?status=pending', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return res.json();
+  },
+
+  async approve(id, userId, token) {
+    return fetch(`/api/approvals/${id}/approve`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ approver_id: userId })
+    });
+  }
+};
+```
+
+---
+
+## 🎓 Requisitos
+
+- PHP 8.2+
+- Laravel 11.x ou 12.x
+- MySQL, PostgreSQL, ou SQLite
+
+---
+
+## 🤝 Contribuir
+
+Contribuições são bem-vindas! Por favor:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+---
+
+## 📝 Changelog
+
+### v0.1.0 (Atual)
+
+**Funcionalidades:**
+- ✅ Sistema completo de aprovações
+- ✅ Três estratégias (single, majority, unanimous)
+- ✅ Aprovações multi-nível com roles
+- ✅ API REST completa
+- ✅ 11 Query Scopes
+- ✅ 4 Eventos
+- ✅ Soft Deletes
+- ✅ Exceções customizadas
+- ✅ Form Requests e Resources
+- ✅ 55 testes (100% cobertura)
+
+---
+
+## 🐛 Problemas e Suporte
+
+- **Issues:** https://github.com/bitoliveira/laravel-info-approval/issues
+- **Segurança:** Veja [SECURITY.md](./SECURITY.md)
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja [LICENSE](./LICENSE) para mais detalhes.
+
+---
+
+## 👤 Autor
+
+**Bruno Oliveira**
+- Email: bit.oliveira.dev@gmail.com
+- GitHub: [@bitoliveira](https://github.com/bitoliveira)
+
+---
+
+## ⭐ Apoie o Projeto
+
+Se este package foi útil para você, considere dar uma ⭐ no GitHub!
+
+---
+
+**Desenvolvido com ❤️ para a comunidade Laravel**

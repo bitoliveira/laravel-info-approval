@@ -2,6 +2,11 @@
 
 namespace bitoliveira\Approval\Http\Controllers;
 
+use bitoliveira\Approval\Exceptions\ApprovalException;
+use bitoliveira\Approval\Http\Requests\ApproveApprovalRequest;
+use bitoliveira\Approval\Http\Requests\RejectApprovalRequest;
+use bitoliveira\Approval\Http\Resources\ApprovalCollection;
+use bitoliveira\Approval\Http\Resources\ApprovalResource;
 use bitoliveira\Approval\Models\Approval;
 use bitoliveira\Approval\Services\ApprovalService;
 use Illuminate\Http\JsonResponse;
@@ -10,83 +15,61 @@ use Illuminate\Routing\Controller;
 
 class ApprovalApiController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): ApprovalCollection
     {
         $query = Approval::query();
 
         if ($status = $request->query('status')) {
-            $query->where('status', $status);
+            $query->status($status);
         }
 
         if ($approvableType = $request->query('approvable_type')) {
-            $query->where('approvable_type', $approvableType);
+            $query->forType($approvableType);
         }
 
         if ($approvableId = $request->query('approvable_id')) {
             $query->where('approvable_id', $approvableId);
         }
 
-        $approvals = $query->latest()->paginate(15);
+        $approvals = $query->recent()->paginate(15);
 
-        return response()->json($approvals);
+        return new ApprovalCollection($approvals);
     }
 
-    public function show(Approval $approval): JsonResponse
+    public function show(Approval $approval): ApprovalResource
     {
-        return response()->json($approval);
+        return new ApprovalResource($approval);
     }
 
-    public function approve(Request $request, Approval $approval, ApprovalService $service): JsonResponse
+    public function approve(ApproveApprovalRequest $request, Approval $approval, ApprovalService $service): JsonResponse
     {
-        $data = $request->validate([
-            'approver_id' => ['required', 'integer'],
-        ]);
-
-        // Validar que o approver_id é do utilizador autenticado
-        if ($request->user() && (int) $data['approver_id'] !== (int) $request->user()->id) {
-            return response()->json([
-                'message' => 'O approver_id deve corresponder ao utilizador autenticado.',
-            ], 403);
-        }
-
         try {
-            $service->approve($approval, (int) $data['approver_id']);
-        } catch (\Throwable $e) {
+            $service->approve($approval, (int) $request->validated('approver_id'));
+        } catch (ApprovalException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ], 422);
+            ], $e->getCode() ?: 422);
         }
 
         return response()->json([
             'message' => 'Approval updated successfully.',
-            'approval' => $approval->fresh(),
+            'approval' => new ApprovalResource($approval->fresh()),
         ]);
     }
 
-    public function reject(Request $request, Approval $approval, ApprovalService $service): JsonResponse
+    public function reject(RejectApprovalRequest $request, Approval $approval, ApprovalService $service): JsonResponse
     {
-        $data = $request->validate([
-            'approver_id' => ['required', 'integer'],
-        ]);
-
-        // Validar que o approver_id é do utilizador autenticado
-        if ($request->user() && (int) $data['approver_id'] !== (int) $request->user()->id) {
-            return response()->json([
-                'message' => 'O approver_id deve corresponder ao utilizador autenticado.',
-            ], 403);
-        }
-
         try {
-            $service->reject($approval, (int) $data['approver_id']);
-        } catch (\Throwable $e) {
+            $service->reject($approval, (int) $request->validated('approver_id'));
+        } catch (ApprovalException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ], 422);
+            ], $e->getCode() ?: 422);
         }
 
         return response()->json([
             'message' => 'Approval updated successfully.',
-            'approval' => $approval->fresh(),
+            'approval' => new ApprovalResource($approval->fresh()),
         ]);
     }
 }
