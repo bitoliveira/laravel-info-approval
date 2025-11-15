@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->morphs('approvable'); // modelo alvo (Employee, Invoice, etc.)
             $table->string('action'); // ex: update_field, delete, create
-            $table->json('data')->nullable(); // dados da alteração
+            $table->json('old_data')->nullable(); // dados antes da alteração
+            $table->json('data')->nullable(); // dados da alteração (apenas os campos diferentes)
             // Níveis de aprovação e registo de aprovações por nível
             $table->json('levels')->nullable(); // [{ roles: ["Manager", "Finance"] }, { roles: ["Admin"] }]
             $table->unsignedInteger('current_level')->default(1); // 1-based

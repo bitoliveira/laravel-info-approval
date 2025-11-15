@@ -17,6 +17,7 @@ class Approval extends Model
         'approvable_type',
         'approvable_id',
         'action',
+        'old_data',
         'data',
         'levels',
         'current_level',
@@ -28,6 +29,7 @@ class Approval extends Model
     ];
 
     protected $casts = [
+        'old_data' => 'array',
         'data' => 'array',
         'levels' => 'array',
         'approvals_log' => 'array',
