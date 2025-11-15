@@ -16,20 +16,22 @@ trait HasApprovals
     public function requestApproval(string $action, array $data, int $userId, ?array $levels = null): Approval
     {
         // Capture old data from the current model state
-        $oldData = $this->getAttributes();
+        $tmpOldData = $this->getAttributes();
 
         // Filter data to only include fields that are different
         $changedData = [];
+        $changeOldData = [];
         foreach ($data as $key => $value) {
             // If the key exists in old data and the value is different, or if it's a new field
-            if (!array_key_exists($key, $oldData) || $oldData[$key] !== $value) {
+            if (!array_key_exists($key, $tmpOldData) || $tmpOldData[$key] !== $value) {
                 $changedData[$key] = $value;
+                $changeOldData[$key] = $tmpOldData[$key];
             }
         }
 
         $approval = $this->approvals()->create([
             'action' => $action,
-            'old_data' => $oldData,
+            'old_data' => $changeOldData,
             'data' => $changedData,
             'levels' => $levels,
             'current_level' => 1,
