@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8a28d503-deae-40fa-9585-7ccb9be97a78" name="Changes" comment="wip">
-      <change beforePath="$PROJECT_DIR$/src/Traits/HasApprovals.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Traits/HasApprovals.php" afterDir="false" />
-    </list>
+    <list default="true" id="8a28d503-deae-40fa-9585-7ccb9be97a78" name="Changes" comment="wip" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +17,24 @@
     </execution>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="develop" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -185,7 +201,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "com.laravel_idea.eloquent_global_unguard": "0",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "develop",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "P:/Packages/laravel-info-approval",
     "node.js.detected.package.eslint": "true",
@@ -224,7 +240,7 @@
       <workItem from="1758495493783" duration="3372000" />
       <workItem from="1759180365905" duration="36000" />
       <workItem from="1763161972207" duration="6758000" />
-      <workItem from="1763170282442" duration="2147000" />
+      <workItem from="1763170282442" duration="2580000" />
     </task>
     <task id="LOCAL-00001" summary="First">
       <option name="closed" value="true" />
@@ -306,7 +322,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763171638142</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="wip">
+      <option name="closed" value="true" />
+      <created>1763172462033</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1763172462033</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
