@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8a28d503-deae-40fa-9585-7ccb9be97a78" name="Changes" comment="wip" />
+    <list default="true" id="8a28d503-deae-40fa-9585-7ccb9be97a78" name="Changes" comment="wip">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.phpunit.cache/test-results" beforeDir="false" afterPath="$PROJECT_DIR$/.phpunit.cache/test-results" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/approval.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/approval.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Traits/HasApprovals.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Traits/HasApprovals.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/ApiApprovalTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ApiApprovalTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/ApiValidationTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ApiValidationTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/ApprovalIntegrationTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ApprovalIntegrationTest.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +25,19 @@
     </execution>
   </component>
   <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
     <favorite-branches>
       <branch-storage>
         <map>
@@ -27,12 +48,19 @@
               </list>
             </value>
           </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/develop" />
+              </list>
+            </value>
+          </entry>
         </map>
       </branch-storage>
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -201,7 +229,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "com.laravel_idea.eloquent_global_unguard": "0",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "P:/Packages/laravel-info-approval",
     "node.js.detected.package.eslint": "true",
@@ -240,7 +268,7 @@
       <workItem from="1758495493783" duration="3372000" />
       <workItem from="1759180365905" duration="36000" />
       <workItem from="1763161972207" duration="6758000" />
-      <workItem from="1763170282442" duration="2580000" />
+      <workItem from="1763170282442" duration="6106000" />
     </task>
     <task id="LOCAL-00001" summary="First">
       <option name="closed" value="true" />
@@ -330,7 +358,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763172462033</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="wip">
+      <option name="closed" value="true" />
+      <created>1763173045393</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1763173045394</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

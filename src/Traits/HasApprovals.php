@@ -25,7 +25,7 @@ trait HasApprovals
             // If the key exists in old data and the value is different, or if it's a new field
             if (!array_key_exists($key, $tmpOldData) || $tmpOldData[$key] !== $value) {
                 $changedData[$key] = $value;
-                $changeOldData[$key] = $tmpOldData[$key];
+                $changeOldData[$key] = $tmpOldData[$key] ?? null;
             }
         }
 

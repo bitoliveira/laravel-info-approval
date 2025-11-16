@@ -15,7 +15,7 @@ it('approves an approval request via API and executes the action', function () {
     ], userId: 1, levels: null);
 
     // Act: call the approve endpoint
-    $response = $this->postJson('/approvals/' . $approval->id . '/approve', [
+    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', [
         'approver_id' => 1,
     ]);
 
@@ -39,7 +39,7 @@ it('rejects an approval request via API', function () {
         'new_value' => 1000,
     ], userId: 2, levels: null);
 
-    $response = $this->postJson('/approvals/' . $approval->id . '/reject', [
+    $response = $this->postJson('/api/approval/' . $approval->id . '/reject', [
         'approver_id' => 3,
     ]);
 

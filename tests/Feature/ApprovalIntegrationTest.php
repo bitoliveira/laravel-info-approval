@@ -164,24 +164,24 @@ it('integrates with API for complete workflow', function () {
     ], userId: 1);
 
     // Step 2: List via API
-    $listResponse = $this->getJson('/approvals?status=pending');
+    $listResponse = $this->getJson('/api/approval?status=pending');
     $listResponse->assertOk();
     expect($listResponse->json('data'))->toBeArray();
 
     // Step 3: Get details via API
-    $detailsResponse = $this->getJson('/approvals/' . $approval->id);
+    $detailsResponse = $this->getJson('/api/approval/' . $approval->id);
     $detailsResponse->assertOk();
     $detailsResponse->assertJsonPath('status', 'pending');
 
     // Step 4: Approve via API (first approval)
-    $approve1Response = $this->postJson('/approvals/' . $approval->id . '/approve', [
+    $approve1Response = $this->postJson('/api/approval/' . $approval->id . '/approve', [
         'approver_id' => 30,
     ]);
     $approve1Response->assertOk();
     $approve1Response->assertJsonPath('approval.status', 'pending');
 
     // Step 5: Approve via API (second approval - majority reached)
-    $approve2Response = $this->postJson('/approvals/' . $approval->id . '/approve', [
+    $approve2Response = $this->postJson('/api/approval/' . $approval->id . '/approve', [
         'approver_id' => 31,
     ]);
     $approve2Response->assertOk();

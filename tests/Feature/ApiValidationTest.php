@@ -10,7 +10,7 @@ it('returns validation error when approver_id is missing', function () {
         'new_value' => 2000,
     ], userId: 1);
 
-    $response = $this->postJson('/approvals/' . $approval->id . '/approve', []);
+    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', []);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['approver_id']);
@@ -24,7 +24,7 @@ it('returns validation error when approver_id is not an integer', function () {
         'new_value' => 2500,
     ], userId: 1);
 
-    $response = $this->postJson('/approvals/' . $approval->id . '/approve', [
+    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', [
         'approver_id' => 'not-an-integer',
     ]);
 
@@ -43,7 +43,7 @@ it('lists approvals with pagination via API', function () {
         ], userId: 1);
     }
 
-    $response = $this->getJson('/approvals');
+    $response = $this->getJson('/api/approval');
 
     $response->assertOk();
     $response->assertJsonStructure([
@@ -87,14 +87,14 @@ it('filters approvals by status via API', function () {
     app(\bitoliveira\Approval\Services\ApprovalService::class)->approve($approved, approverId: 2);
 
     // Filter by pending
-    $response = $this->getJson('/approvals?status=pending');
+    $response = $this->getJson('/api/approval?status=pending');
     $response->assertOk();
 
     $pendingApprovals = collect($response->json('data'))->where('status', 'pending');
     expect($pendingApprovals->count())->toBeGreaterThan(0);
 
     // Filter by approved
-    $response = $this->getJson('/approvals?status=approved');
+    $response = $this->getJson('/api/approval?status=approved');
     $response->assertOk();
 
     $approvedApprovals = collect($response->json('data'))->where('status', 'approved');
@@ -109,7 +109,7 @@ it('filters approvals by approvable_type via API', function () {
         'new_value' => 3000,
     ], userId: 1);
 
-    $response = $this->getJson('/approvals?approvable_type=' . urlencode(Employee::class));
+    $response = $this->getJson('/api/approval?approvable_type=' . urlencode(Employee::class));
 
     $response->assertOk();
     expect($response->json('data'))->toBeArray();
@@ -127,7 +127,7 @@ it('shows single approval details via API', function () {
         'strategy' => 'single',
     ], userId: 1);
 
-    $response = $this->getJson('/approvals/' . $approval->id);
+    $response = $this->getJson('/api/approval/' . $approval->id);
 
     $response->assertOk();
     $response->assertJsonStructure([
@@ -162,11 +162,11 @@ it('returns proper error codes for exceptions via API', function () {
     ], userId: 1);
 
     // First approval
-    $this->postJson('/approvals/' . $approval->id . '/approve', ['approver_id' => 10])
+    $this->postJson('/api/approval/' . $approval->id . '/approve', ['approver_id' => 10])
         ->assertOk();
 
     // Duplicate approval - should return 422
-    $response = $this->postJson('/approvals/' . $approval->id . '/approve', ['approver_id' => 10]);
+    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', ['approver_id' => 10]);
 
     $response->assertStatus(422);
     $response->assertJson([
