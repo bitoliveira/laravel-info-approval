@@ -15,8 +15,9 @@ use Illuminate\Routing\Controller;
 
 class ApprovalApiController extends Controller
 {
-    public function index(Request $request): ApprovalCollection
+    public function index(Request $request)
     {
+        return [];
         $query = Approval::query();
 
         if ($status = $request->query('status')) {
