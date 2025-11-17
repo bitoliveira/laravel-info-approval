@@ -116,6 +116,20 @@ class  ApprovalService implements ApprovalServiceInterface
                 return;
             }
 
+            // Check if the model has a custom method to execute the approval action
+            $customMethodName = 'executeApprovalAction' . str_replace(['-', '_'], '', ucwords($approval->action, '-_'));
+            if (method_exists($model, $customMethodName)) {
+                $model->{$customMethodName}($approval);
+                return;
+            }
+
+            // Check for a generic custom action handler
+            if (method_exists($model, 'executeApprovalAction')) {
+                $model->executeApprovalAction($approval);
+                return;
+            }
+
+            // Handle built-in actions
             switch ($approval->action) {
                 case 'update_field':
                     $field = $approval->data['field'] ?? null;
@@ -137,9 +151,11 @@ class  ApprovalService implements ApprovalServiceInterface
                     break;
 
                 default:
-                    Log::warning('Unknown approval action', [
+                    Log::warning('Unknown approval action - no handler found', [
                         'approval_id' => $approval->id,
                         'action' => $approval->action,
+                        'approvable_type' => $approval->approvable_type,
+                        'hint' => "Implement method '{$customMethodName}' or 'executeApprovalAction' on the model to handle this action.",
                     ]);
                     break;
             }
