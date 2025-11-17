@@ -12,6 +12,7 @@ use bitoliveira\Approval\Exceptions\UnauthorizedApproverException;
 use bitoliveira\Approval\Models\Approval;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class  ApprovalService implements ApprovalServiceInterface
 {
@@ -103,27 +104,53 @@ class  ApprovalService implements ApprovalServiceInterface
 
     protected function executeAction(Approval $approval): void
     {
-        $model = $approval->approvable;
+        try {
+            $model = $approval->approvable;
 
-        switch ($approval->action) {
-            case 'update_field':
-                $field = $approval->data['field'] ?? null;
-                $value = $approval->data['new_value'] ?? null;
-                if ($field !== null) {
-                    $model->update([$field => $value]);
-                }
-                break;
+            if (!$model) {
+                Log::error('Approval action failed: approvable model not found', [
+                    'approval_id' => $approval->id,
+                    'approvable_type' => $approval->approvable_type,
+                    'approvable_id' => $approval->approvable_id,
+                ]);
+                return;
+            }
 
-            case 'delete':
-                $model->delete();
-                break;
+            switch ($approval->action) {
+                case 'update_field':
+                    $field = $approval->data['field'] ?? null;
+                    $value = $approval->data['new_value'] ?? null;
+                    if ($field !== null) {
+                        $model->update([$field => $value]);
+                    }
+                    break;
 
-            case 'create':
-                $modelClass = $approval->approvable_type;
-                if (class_exists($modelClass)) {
-                    $modelClass::create($approval->data ?? []);
-                }
-                break;
+                case 'delete':
+                    $model->delete();
+                    break;
+
+                case 'create':
+                    $modelClass = $approval->approvable_type;
+                    if (class_exists($modelClass)) {
+                        $modelClass::create($approval->data ?? []);
+                    }
+                    break;
+
+                default:
+                    Log::warning('Unknown approval action', [
+                        'approval_id' => $approval->id,
+                        'action' => $approval->action,
+                    ]);
+                    break;
+            }
+        } catch (\Throwable $e) {
+            Log::error('Error executing approval action', [
+                'approval_id' => $approval->id,
+                'action' => $approval->action,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
         }
     }
 
