@@ -2,36 +2,6 @@
 
 use bitoliveira\Approval\Tests\Fixtures\Models\Employee;
 
-it('returns validation error when approver_id is missing', function () {
-    $employee = Employee::query()->create(['name' => 'Alice', 'salary' => 1000]);
-
-    $approval = $employee->requestApproval('update_field', [
-        'field' => 'salary',
-        'new_value' => 2000,
-    ], userId: 1);
-
-    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', []);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['approver_id']);
-});
-
-it('returns validation error when approver_id is not an integer', function () {
-    $employee = Employee::query()->create(['name' => 'Bob', 'salary' => 1500]);
-
-    $approval = $employee->requestApproval('update_field', [
-        'field' => 'salary',
-        'new_value' => 2500,
-    ], userId: 1);
-
-    $response = $this->postJson('/api/approval/' . $approval->id . '/approve', [
-        'approver_id' => 'not-an-integer',
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['approver_id']);
-});
-
 it('lists approvals with pagination via API', function () {
     $employee = Employee::query()->create(['name' => 'Carol', 'salary' => 2000]);
 

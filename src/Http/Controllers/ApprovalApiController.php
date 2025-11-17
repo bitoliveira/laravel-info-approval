@@ -44,7 +44,7 @@ class ApprovalApiController extends Controller
     public function approve(ApproveApprovalRequest $request, Approval $approval, ApprovalService $service): JsonResponse
     {
         try {
-            $service->approve($approval, (int) $request->validated('approver_id'));
+            $service->approve($approval, $request->getApproverId());
         } catch (ApprovalException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -60,7 +60,7 @@ class ApprovalApiController extends Controller
     public function reject(RejectApprovalRequest $request, Approval $approval, ApprovalService $service): JsonResponse
     {
         try {
-            $service->reject($approval, (int) $request->validated('approver_id'));
+            $service->reject($approval, $request->getApproverId());
         } catch (ApprovalException $e) {
             return response()->json([
                 'message' => $e->getMessage(),

@@ -11,13 +11,7 @@ class ApproveApprovalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Allow authorization if there's no user (testing scenarios)
-        if (!$this->user()) {
-            return true;
-        }
-
-        // In production, ensure approver_id matches authenticated user
-        return (int) $this->input('approver_id') === (int) $this->user()->id;
+        return true;
     }
 
     /**
@@ -27,30 +21,20 @@ class ApproveApprovalRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'approver_id' => ['required', 'integer'],
-        ];
+        return [];
     }
 
     /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
+     * Get the approver ID from the authenticated user.
+     * Falls back to the request input for testing scenarios.
      */
-    public function messages(): array
+    public function getApproverId(): ?int
     {
-        return [
-            'approver_id.required' => 'O ID do aprovador é obrigatório.',
-            'approver_id.integer' => 'O ID do aprovador deve ser um número inteiro.',
-            'approver_id.exists' => 'O aprovador especificado não existe.',
-        ];
-    }
+        if ($this->user()) {
+            return (int) $this->user()->id;
+        }
 
-    /**
-     * Handle a failed authorization attempt.
-     */
-    protected function failedAuthorization(): void
-    {
-        throw new \bitoliveira\Approval\Exceptions\ApproverMismatchException();
+        // Fallback for testing scenarios without authentication
+        return $this->input('approver_id') ? (int) $this->input('approver_id') : null;
     }
 }
