@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->nullable();
             $table->decimal('salary', 10, 2)->default(0);
+            $table->string('asycuda_code')->nullable();
+            $table->string('asycuda_status')->nullable();
             $table->timestamps();
         });
     }

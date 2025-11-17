@@ -130,34 +130,38 @@ class  ApprovalService implements ApprovalServiceInterface
             }
 
             // Handle built-in actions
-            switch ($approval->action) {
-                case 'update_field':
-                    $field = $approval->data['field'] ?? null;
-                    $value = $approval->data['new_value'] ?? null;
-                    if ($field !== null) {
-                        $model->update([$field => $value]);
+            if (str_starts_with($approval->action, 'update')) {
+                // Handle update actions (update, update_field, etc.)
+                $field = $approval->data['field'] ?? null;
+                $value = $approval->data['new_value'] ?? null;
+
+                if ($field !== null && $value !== null) {
+                    // Single field update (legacy support)
+                    $model->update([$field => $value]);
+                } else {
+                    // Multiple fields update - filter out metadata fields
+                    $dataToUpdate = collect($approval->data)
+                        ->except(['field', 'new_value', 'strategy', 'approvers', 'levels'])
+                        ->toArray();
+
+                    if (!empty($dataToUpdate)) {
+                        $model->update($dataToUpdate);
                     }
-                    break;
-
-                case 'delete':
-                    $model->delete();
-                    break;
-
-                case 'create':
-                    $modelClass = $approval->approvable_type;
-                    if (class_exists($modelClass)) {
-                        $modelClass::create($approval->data ?? []);
-                    }
-                    break;
-
-                default:
-                    Log::warning('Unknown approval action - no handler found', [
-                        'approval_id' => $approval->id,
-                        'action' => $approval->action,
-                        'approvable_type' => $approval->approvable_type,
-                        'hint' => "Implement method '{$customMethodName}' or 'executeApprovalAction' on the model to handle this action.",
-                    ]);
-                    break;
+                }
+            } elseif ($approval->action === 'delete') {
+                $model->delete();
+            } elseif ($approval->action === 'create') {
+                $modelClass = $approval->approvable_type;
+                if (class_exists($modelClass)) {
+                    $modelClass::create($approval->data ?? []);
+                }
+            } else {
+                Log::warning('Unknown approval action - no handler found', [
+                    'approval_id' => $approval->id,
+                    'action' => $approval->action,
+                    'approvable_type' => $approval->approvable_type,
+                    'hint' => "Implement method '{$customMethodName}' or 'executeApprovalAction' on the model to handle this action.",
+                ]);
             }
         } catch (\Throwable $e) {
             Log::error('Error executing approval action', [

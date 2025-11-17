@@ -3,22 +3,26 @@
 use bitoliveira\Approval\Tests\Fixtures\Models\Employee;
 
 it('executes custom approval action using specific method', function () {
-    $employee = Employee::query()->create(['name' => 'John', 'salary' => 1000]);
+    $employee = Employee::query()->create(['name' => 'John', 'salary' => 1000, 'asycuda_code' => '321YSA']);
 
     // Create an approval with custom action
     $approval = $employee->requestApproval('update-asycuda', [
         'asycuda_code' => 'ASY123',
-        'status' => 'exported',
+        'asycuda_status' => 'exported',
     ], userId: 1);
 
-    expect($approval->status)->toBe('pending');
-    expect($approval->action)->toBe('update-asycuda');
+    expect($approval->status)->toBe('pending')
+        ->and($approval->action)->toBe('update-asycuda');
 
     // Approve the request
     app(\bitoliveira\Approval\Services\ApprovalService::class)->approve($approval, approverId: 1);
 
     $approval->refresh();
     expect($approval->status)->toBe('approved');
+
+    $employee->refresh();
+    expect($employee->asycuda_code)->toBe('ASY123')
+        ->and($employee->asycuda_status)->toBe('exported');
 });
 
 it('logs warning for unknown approval action without handler', function () {

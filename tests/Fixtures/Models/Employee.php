@@ -26,16 +26,19 @@ class Employee extends Model
     {
         // Custom logic for update-asycuda action
         $asycudaCode = $approval->data['asycuda_code'] ?? null;
-        $status = $approval->data['status'] ?? null;
+        $asycudaStatus = $approval->data['asycuda_status'] ?? null;
 
         Log::info('Executing update-asycuda action', [
             'employee_id' => $this->id,
             'asycuda_code' => $asycudaCode,
-            'status' => $status,
+            'asycuda_status' => $asycudaStatus,
         ]);
 
-        // You would implement your actual ASYCUDA update logic here
-        // For example: update a related model, call an external API, etc.
+        // Update the employee with ASYCUDA data
+        $this->update([
+            'asycuda_code' => $asycudaCode,
+            'asycuda_status' => $asycudaStatus,
+        ]);
     }
 
 }
