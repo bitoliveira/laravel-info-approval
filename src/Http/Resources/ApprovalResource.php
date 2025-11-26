@@ -20,6 +20,7 @@ class ApprovalResource extends JsonResource
             'approvable_id' => $this->approvable_id,
             'action' => $this->action,
             'data' => $this->data,
+            'old_data' => $this->old_data,
             'levels' => $this->levels,
             'current_level' => $this->current_level,
             'approvals_log' => $this->approvals_log,

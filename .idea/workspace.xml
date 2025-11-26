@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3129ab4d-e571-4a14-a789-4ba9882e043a" name="Changes" comment="wip">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.phpunit.cache/test-results" beforeDir="false" afterPath="$PROJECT_DIR$/.phpunit.cache/test-results" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Services/ApprovalService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/ApprovalService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Database/migrations/0001_01_01_000000_create_employees_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Database/migrations/0001_01_01_000000_create_employees_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/ApprovalFlowTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ApprovalFlowTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/CustomApprovalActionsTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/CustomApprovalActionsTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Fixtures/Models/Employee.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Fixtures/Models/Employee.php" afterDir="false" />
-    </list>
+    <list default="true" id="3129ab4d-e571-4a14-a789-4ba9882e043a" name="Changes" comment="wip" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,7 +16,19 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration">
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "bitoliveira"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/bitoliveira/laravel-approval.git",
+    "accountId": "83555698-3914-44e0-9394-49564db218fc"
+  }
+}]]></component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:/dev/php/php.exe">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
@@ -159,16 +163,37 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="35fficR55raE99MrQPWqTtRKy8Y" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "master",
-    "node.js.selected.package.tslint": "(autodetect)"
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
-    <configuration default="true" type="ComposerRunConfigurationType" factoryName="Composer Script">
-      <method v="2" />
-    </configuration>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-PS-252.27397.112" />
+        <option value="bundled-php-predefined-a98d8de5180a-b35feea871ed-com.jetbrains.php.sharedIndexes-PS-252.27397.112" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="wip">
@@ -226,6 +251,14 @@
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
       <updated>1763366640706</updated>
+    </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3129ab4d-e571-4a14-a789-4ba9882e043a" name="Changes" comment="wip" />
+      <created>1763506178181</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763506178181</updated>
+      <workItem from="1763506184052" duration="30000" />
     </task>
     <option name="localTasksCounter" value="8" />
     <servers />
