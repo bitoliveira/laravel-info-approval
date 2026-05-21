@@ -1,6 +1,6 @@
 {
   "name": "bitoliveira/laravel-info-approval",
-  "version": "0.2.2.0",
+  "version": "0.2.2",
   "description": "A Laravel package to add approval workflows to Eloquent models.",
   "type": "library",
   "license": "MIT",
@@ -13,15 +13,15 @@
   ],
   "require": {
     "php": ">=8.2",
-    "illuminate/auth": "^11|^12",
-    "illuminate/database": "^11|^12",
-    "illuminate/broadcasting": "^11|^12",
-    "illuminate/routing": "^11|^12"
+    "illuminate/auth": "^11|^12|^13",
+    "illuminate/database": "^11|^12|^13",
+    "illuminate/broadcasting": "^11|^12|^13",
+    "illuminate/routing": "^11|^12|^13"
   },
   "require-dev": {
-    "orchestra/testbench": "^8.0|^9.0",
-    "pestphp/pest": "^2.34",
-    "pestphp/pest-plugin-laravel": "^2.0"
+    "orchestra/testbench": "^8.0|^9.0|^10.0",
+    "pestphp/pest": "^2.34|^3.0|^4.0",
+    "pestphp/pest-plugin-laravel": "^2.0|^3.0|^4.0"
   },
   "autoload": {
     "psr-4": {
